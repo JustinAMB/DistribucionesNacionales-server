@@ -8,4 +8,4 @@ const cuponSchema = Schema({
 
 
 });
-module.exports = mongoose.model(cuponSchema);
+module.exports = mongoose.model('cupon', cuponSchema);

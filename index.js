@@ -5,6 +5,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/DistribucionesNacionales', async(err
 });
 const app = express();
 app.set('port', process.env.PORT || 73);
+app.use(express.json());
 require("dotenv").config();
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');

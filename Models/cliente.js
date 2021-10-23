@@ -12,4 +12,4 @@ const clienteSchema = Schema({
     fechaNacimiento: { type: String, required: false },
     cedula: { type: String, required: false },
 });
-module.exports = mongoose.model(clienteSchema);
+module.exports = mongoose.model('cliente', clienteSchema);
