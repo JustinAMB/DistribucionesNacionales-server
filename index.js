@@ -16,6 +16,11 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/cliente', require('./routes/cliente'));
+app.use('/api/producto', require('./routes/producto'));
+app.use('/api/cupon', require('./routes/cupon'));
+app.use('/api/descuento', require('./routes/descuento'));
+app.use('/api/config', require('./routes/config'));
+app.use('/api/admin', require('./routes/admin'));
 app.listen(app.get('port'), () => {
     console.log(`puerto ${app.get('port')}`);
 });
