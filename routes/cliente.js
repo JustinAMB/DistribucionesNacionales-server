@@ -1,15 +1,37 @@
 const express = require('express');
-const adminController = require('../controllers/AdminController');
-const auth = require('../middlewares/authenticate');
+const clienteController = require('../controllers/ClienteController');
+
 const router = express.Router();
+const auth = require('../middlewares/authenticate');
 
-router.post('/registro_admin', adminController.registro_admin);
-router.post('/login_admin', adminController.login_admin);
+router.post('/registro_cliente', clienteController.registro_cliente);
+router.get('/obtener_direccion_principal_cliente/:id', auth.auth, clienteController.obtener_direccion_principal_cliente);
+router.post('/login_cliente', clienteController.login_cliente);
 
-router.get('/obtener_mensajes_admin', auth.auth, adminController.obtener_mensajes_admin);
-router.put('/cerrar_mensaje_admin/:id', auth.auth, adminController.cerrar_mensaje_admin);
+router.get('/listar_clientes_filtro_admin/:tipo/:filtro', auth.auth, clienteController.listar_clientes_filtro_admin);
+router.post('/registro_cliente_admin', auth.auth, clienteController.registro_cliente_admin);
+router.get('/obtener_cliente_admin/:id', auth.auth, clienteController.obtener_cliente_admin);
+router.put('/actulizar_cliente_admin/:id', auth.auth, clienteController.actulizar_cliente_admin);
+router.delete('/eliminar_cliente_admin/:id', auth.auth, clienteController.eliminar_cliente_admin);
+router.get('/obtener_cliente_guest/:id', auth.auth, clienteController.obtener_cliente_guest);
+router.put('/actualizar_perfil_cliente_guest/:id', auth.auth, clienteController.actualizar_perfil_cliente_guest);
 
-router.get('/obtener_ventas_admin/:desde?/:hasta?', auth.auth, adminController.obtener_ventas_admin);
-router.get('/kpi_ganancias_mensuales_admin', auth.auth, adminController.kpi_ganancias_mensuales_admin);
+
+///DIRECCION
+router.post('/registro_direccion_cliente', auth.auth, clienteController.registro_direccion_cliente);
+router.get('/obtener_direccion_todos_cliente/:id', auth.auth, clienteController.obtener_direccion_todos_cliente);
+router.put('/cambiar_direccion_principal_cliente/:id/:cliente', auth.auth, clienteController.cambiar_direccion_principal_cliente);
+
+//CONTACTO
+router.post('/enviar_mensaje_contacto', clienteController.enviar_mensaje_contacto);
+
+//ORDENES
+router.get('/obtener_ordenes_cliente/:id', auth.auth, clienteController.obtener_ordenes_cliente);
+router.get('/obtener_detalles_ordenes_cliente/:id', auth.auth, clienteController.obtener_detalles_ordenes_cliente);
+
+//REVIEWS
+router.post('/emitir_review_producto_cliente', auth.auth, clienteController.emitir_review_producto_cliente);
+router.get('/obtener_review_producto_cliente/:id', clienteController.obtener_review_producto_cliente);
+router.get('/obtener_reviews_cliente/:id', auth.auth, clienteController.obtener_reviews_cliente);
 
 module.exports = router;
