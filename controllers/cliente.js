@@ -1,13 +1,13 @@
-const cliente = require('../Models/cliente');
+const Cliente = require('../Models/cliente');
 
 
-var Cliente = require('../models/cliente');
-var Venta = require('../models/venta');
-var Dventa = require('../models/dventa');
-var Contacto = require('../models/contacto');
-var Review = require('../models/review');
-var bcrypt = require('bcrypt-nodejs');
-var jwt = require('../helpers/jwt');
+
+const Venta = require('../models/venta');
+const Dventa = require('../models/dventa');
+const Contacto = require('../models/contacto');
+const Review = require('../models/review');
+const bcrypt = require('bcrypt-nodejs');
+const jwt = require('../helpers/jwt');
 
 var Direccion = require('../models/direccion');
 

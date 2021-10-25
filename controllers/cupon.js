@@ -7,7 +7,10 @@ const registro_cupon_admin = async(req, res) => {
             let data = req.body;
 
             let reg = await Cupon.create(data);
-            res.status(200).send({ data: reg });
+            res.status(200).send({
+                ok: true,
+                data: reg
+            });
 
         } else {
             res.status(500).send({ message: 'NoAccess' });

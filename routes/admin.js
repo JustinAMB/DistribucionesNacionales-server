@@ -4,7 +4,7 @@ const auth = require('../middlewares/authenticate');
 const router = express.Router();
 
 router.post('/registro_admin', adminController.registro_admin);
-router.post('/login_admin', adminController.login_admin);
+router.post('/login', adminController.login_admin);
 
 router.get('/obtener_mensajes_admin', auth.auth, adminController.obtener_mensajes_admin);
 router.put('/cerrar_mensaje_admin/:id', auth.auth, adminController.cerrar_mensaje_admin);
