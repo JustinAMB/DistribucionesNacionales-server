@@ -13,10 +13,10 @@ const registro_cupon_admin = async(req, res) => {
             });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -27,17 +27,17 @@ const listar_cupones_admin = async(req, res) => {
             var filtro = req.params['filtro'];
 
             let reg = await Cupon.find({ codigo: new RegExp(filtro, 'i') }).sort({ createdAt: -1 });
-            res.status(200).send({ data: reg });
+            res.status(200).send({ ok: true, data: reg });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
-const obtener_cupon_admin = async function(req, res) {
+const obtener_cupon_admin = async(req, res) => {
     if (req.user) {
         if (req.user.role == 'admin') {
 
@@ -45,16 +45,16 @@ const obtener_cupon_admin = async function(req, res) {
 
             try {
                 var reg = await Cupon.findById({ _id: id });
-                res.status(200).send({ data: reg });
+                res.status(200).send({ ok: true, data: reg });
             } catch (error) {
-                res.status(200).send({ data: undefined });
+                res.status(200).send({ ok: false, message: 'cupon no encontrado' });
             }
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -72,14 +72,14 @@ const actualizar_cupon_admin = async function(req, res) {
                 limite: data.limite
             });
 
-            res.status(200).send({ data: reg });
+            res.status(200).send({ ok: true, data: reg });
 
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -90,13 +90,13 @@ const eliminar_cupon_admin = async function(req, res) {
             var id = req.params['id'];
 
             let reg = await Cupon.findByIdAndRemove({ _id: id });
-            res.status(200).send({ data: reg });
+            res.status(200).send({ ok: true, data: reg });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -109,16 +109,16 @@ const validar_cupon_admin = async function(req, res) {
 
         if (data) {
             if (data.limite == 0) {
-                res.status(200).send({ data: undefined });
+                res.status(200).send({ ok: false });
             } else {
-                res.status(200).send({ data: data });
+                res.status(200).send({ ok: true, data: data });
             }
         } else {
-            res.status(200).send({ data: undefined });
+            res.status(200).send({ ok: false, message: 'cupon no valido' });
         }
 
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
