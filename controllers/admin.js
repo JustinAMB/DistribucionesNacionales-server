@@ -8,6 +8,7 @@ var Contacto = require('../models/contacto');
 var bcrypt = require('bcrypt-nodejs');
 var jwt = require('../helpers/jwt');
 const venta = require('../models/venta');
+const { addListener } = require('../models/admin');
 
 const registro_admin = async function(req, res) {
     //
@@ -67,18 +68,18 @@ const login_admin = async function(req, res) {
 }
 
 
-const obtener_mensajes_admin = async function(req, res) {
+const obtener_mensajes_admin = async(req, res) => {
     if (req.user) {
         if (req.user.role == 'admin') {
 
             let reg = await Contacto.find().sort({ createdAt: -1 });
-            res.status(200).send({ data: reg });
+            res.status(200).send({ ok: true, data: reg });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -89,13 +90,13 @@ const cerrar_mensaje_admin = async function(req, res) {
             let id = req.params['id'];
 
             let reg = await Contacto.findByIdAndUpdate({ _id: id }, { estado: 'Cerrado' });
-            res.status(200).send({ data: reg });
+            res.status(200).send({ ok: true, data: reg });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -124,14 +125,14 @@ const obtener_ventas_admin = async function(req, res) {
                     }
                 }
 
-                res.status(200).send({ data: ventas });
+                res.status(200).send({ ok: true, data: ventas });
             }
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -208,8 +209,7 @@ const kpi_ganancias_mensuales_admin = async function(req, res) {
                 }
 
             }
-
-            res.status(200).send({
+            const data = {
                 enero: enero,
                 febrero: febrero,
                 marzo: marzo,
@@ -226,13 +226,14 @@ const kpi_ganancias_mensuales_admin = async function(req, res) {
                 total_mes: total_mes,
                 count_ventas: count_ventas,
                 total_mes_anterior: total_mes_anterior
-            })
+            }
+            res.status(200).send({ ok: true, data })
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
