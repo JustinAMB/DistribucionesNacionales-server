@@ -7,13 +7,13 @@ const obtener_config_admin = async(req, res) => {
         if (req.user.role == 'admin') {
 
             let reg = await Config.findById({ _id: "60aac901eadf8212e476d2da" });
-            res.status(200).send({ data: reg });
+            res.status(200).send({ ok: true, data: reg });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -25,9 +25,9 @@ const actualiza_config_admin = async(req, res) => {
 
             if (req.files) {
                 console.log('Si hay img');
-                var img_path = req.files.logo.path;
-                var name = img_path.split('\\');
-                var logo_name = name[2];
+                const img_path = req.files.logo.path;
+                const name = img_path.split('\\');
+
 
 
 
@@ -36,7 +36,7 @@ const actualiza_config_admin = async(req, res) => {
                     categorias: JSON.parse(data.categorias),
                     titulo: data.titulo,
                     serie: data.serie,
-                    logo: logo_name,
+                    logo: name[2],
                     correlativo: data.correlativo,
                 });
 
@@ -47,7 +47,7 @@ const actualiza_config_admin = async(req, res) => {
                         });
                     }
                 })
-                res.status(200).send({ data: reg });
+                res.status(200).send({ ok: true, data: reg });
             } else {
                 console.log('No hay img');
                 let reg = await Config.findByIdAndUpdate({ _id: "60aac901eadf8212e476d2da" }, {
@@ -56,37 +56,42 @@ const actualiza_config_admin = async(req, res) => {
                     serie: data.serie,
                     correlativo: data.correlativo,
                 });
-                res.status(200).send({ data: reg });
+                res.status(200).send({ ok: false, data: reg });
             }
 
 
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
 const obtener_logo = async function(req, res) {
-    var img = req.params['img'];
+    const img = req.params['img'];
 
     console.log(img);
     fs.stat('./uploads/configuraciones/' + img, function(err) {
-        if (!err) {
-            let path_img = './uploads/configuraciones/' + img;
-            res.status(200).sendFile(path.resolve(path_img));
-        } else {
-            let path_img = './uploads/default.jpg';
-            res.status(200).sendFile(path.resolve(path_img));
-        }
+        const path_img = !err ? `./uploads/configuraciones/${img }` : './uploads/default.jpg';
+
+        res.status(200).send({
+            ok: true,
+            data: path.resolve(path_img)
+        });
+
     })
 }
 
 const obtener_config_publico = async(req, res) => {
-    let reg = await Config.findById({ _id: "60aac901eadf8212e476d2da" });
-    res.status(200).send({ data: reg });
+    try {
+        const reg = await Config.findById({ _id: "60aac901eadf8212e476d2da" });
+        res.status(200).send({ ok: true, data: reg });
+    } catch (err) {
+        res.status(501).send({ ok: false, message: 'no se han encontrado las configuraciones' });
+    }
+
 }
 
 module.exports = {
