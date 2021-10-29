@@ -21,7 +21,7 @@ const actualiza_config_admin = async(req, res) => {
     if (req.user) {
         if (req.user.role == 'admin') {
 
-            let data = req.body;
+            const data = req.body;
 
             if (req.files) {
                 console.log('Si hay img');

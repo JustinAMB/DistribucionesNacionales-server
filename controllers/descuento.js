@@ -13,13 +13,13 @@ const registro_descuento_admin = async(req, res) => {
             data.banner = banner_name;
             let reg = await Descuento.create(data);
 
-            res.status(200).send({ data: reg });
+            res.status(200).send({ ok: true, data: reg });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -30,13 +30,13 @@ const listar_descuentos_admin = async(req, res) => {
             var filtro = req.params['filtro'];
 
             let reg = await Descuento.find({ titulo: new RegExp(filtro, 'i') }).sort({ createdAt: -1 });
-            res.status(200).send({ data: reg });
+            res.status(200).send({ ok: true, data: reg });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -44,36 +44,36 @@ const obtener_banner_descuento = async(req, res) => {
     var img = req.params['img'];
 
 
-    fs.stat('./uploads/descuentos/' + img, function(err) {
-        if (!err) {
-            let path_img = './uploads/descuentos/' + img;
-            res.status(200).sendFile(path.resolve(path_img));
-        } else {
-            let path_img = './uploads/default.jpg';
-            res.status(200).sendFile(path.resolve(path_img));
-        }
-    })
+    fs.stat(
+        `./uploads/descuentos/${img}`, (err) => {
+            const path_img = !err ? `./uploads/descuentos/${img}` : './uploads/default.jpg';
+            res.status(200).send({
+                ok: true,
+                data: path_img
+            });
+
+        })
 }
 
 const obtener_descuento_admin = async(req, res) => {
     if (req.user) {
         if (req.user.role == 'admin') {
 
-            var id = req.params['id'];
+            const id = req.params['id'];
 
             try {
-                var reg = await Descuento.findById({ _id: id });
+                const reg = await Descuento.findById({ _id: id });
 
-                res.status(200).send({ data: reg });
+                res.status(200).send({ ok: true, data: reg });
             } catch (error) {
-                res.status(200).send({ data: undefined });
+                res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo' });
             }
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -99,6 +99,9 @@ const actualizar_descuento_admin = async(req, res) => {
                     banner: banner_name
                 });
 
+
+
+
                 fs.stat('./uploads/descuentos/' + reg.banner, function(err) {
                     if (!err) {
                         fs.unlink('./uploads/descuentos/' + reg.banner, (err) => {
@@ -107,7 +110,7 @@ const actualizar_descuento_admin = async(req, res) => {
                     }
                 })
 
-                res.status(200).send({ data: reg });
+                res.status(200).send({ ok: true, data: reg });
             } else {
                 //NO HAY IMAGEN
                 let reg = await Descuento.findByIdAndUpdate({ _id: id }, {
@@ -116,14 +119,14 @@ const actualizar_descuento_admin = async(req, res) => {
                     fecha_inicio: data.fecha_inicio,
                     fecha_fin: data.fecha_fin,
                 });
-                res.status(200).send({ data: reg });
+                res.status(200).send({ ok: true, data: reg });
             }
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -134,13 +137,13 @@ const eliminar_descuento_admin = async(req, res) => {
             var id = req.params['id'];
 
             let reg = await Descuento.findByIdAndRemove({ _id: id });
-            res.status(200).send({ data: reg });
+            res.status(200).send({ ok: true, data: reg });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -161,7 +164,7 @@ const obtener_descuento_activo = async(req, res) => {
     if (arr_descuentos.length >= 1) {
         res.status(200).send({ data: arr_descuentos });
     } else {
-        res.status(200).send({ data: undefined });
+        res.status(401).send({ ok: false, message: 'error' });
     }
 
 }
