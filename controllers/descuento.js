@@ -99,9 +99,6 @@ const actualizar_descuento_admin = async(req, res) => {
                     banner: banner_name
                 });
 
-
-
-
                 fs.stat('./uploads/descuentos/' + reg.banner, function(err) {
                     if (!err) {
                         fs.unlink('./uploads/descuentos/' + reg.banner, (err) => {

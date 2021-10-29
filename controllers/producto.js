@@ -1,12 +1,10 @@
-'use strict'
+const Producto = require('../models/producto');
+const Inventario = require('../models/inventario');
+const Review = require('../models/review');
+const fs = require('fs');
+const path = require('path');
 
-var Producto = require('../models/producto');
-var Inventario = require('../models/inventario');
-var Review = require('../models/review');
-var fs = require('fs');
-var path = require('path');
-
-const registro_producto_admin = async function(req, res) {
+const registro_producto_admin = async(req, res) => {
     if (req.user) {
         if (req.user.role == 'admin') {
             let data = req.body;
@@ -26,234 +24,264 @@ const registro_producto_admin = async function(req, res) {
                 producto: reg._id
             });
 
-            res.status(200).send({ data: reg, inventario: inventario });
+            res.status(200).send({
+                ok: true,
+                data: { reg, inventario }
+
+            });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
-const listar_productos_admin = async function(req, res) {
+const listar_productos_admin = async(req, res) => {
     if (req.user) {
         if (req.user.role == 'admin') {
 
             var filtro = req.params['filtro'];
 
             let reg = await Producto.find({ titulo: new RegExp(filtro, 'i') });
-            res.status(200).send({ data: reg });
+            res.status(200).send({ ok: true, data: reg });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
-const obtener_portada = async function(req, res) {
+const obtener_portada = async(req, res) => {
     var img = req.params['img'];
 
 
-    fs.stat('./uploads/productos/' + img, function(err) {
-        if (!err) {
-            let path_img = './uploads/productos/' + img;
-            res.status(200).sendFile(path.resolve(path_img));
-        } else {
-            let path_img = './uploads/default.jpg';
-            res.status(200).sendFile(path.resolve(path_img));
-        }
+    fs.stat(`./uploads/productos/${img}`, (err) => {
+
+        const path_img = !err ? `./uploads/productos/${img}` : './uploads/default.jpg';
+
+
+        res.status(200).send({ ok: true, data: path_img });
+
     })
 }
 
-const obtener_producto_admin = async function(req, res) {
+const obtener_producto_admin = async(req, res) => {
     if (req.user) {
         if (req.user.role == 'admin') {
 
-            var id = req.params['id'];
+
 
             try {
-                var reg = await Producto.findById({ _id: id });
+                const id = req.params['id'];
+                const reg = await Producto.findById({ _id: id });
 
-                res.status(200).send({ data: reg });
+                res.status(200).send({ ok: true, data: reg });
             } catch (error) {
-                res.status(200).send({ data: undefined });
+                res.status(401).send({ ok: false, message: 'Ha ocurrido erroor, intentalo de nuevo!' });
             }
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
 const actualizar_producto_admin = async function(req, res) {
     if (req.user) {
         if (req.user.role == 'admin') {
-            let id = req.params['id'];
-            let data = req.body;
+            try {
+                let id = req.params['id'];
+                let data = req.body;
 
-            if (req.files) {
-                //SI HAY IMAGEN
-                var img_path = req.files.portada.path;
-                var name = img_path.split('\\');
-                var portada_name = name[2];
+                if (req.files) {
+                    //SI HAY IMAGEN
+
+                    const img_path = req.files.portada.path;
+                    const name = img_path.split('\\');
+                    const portada_name = name[2];
 
 
-                let reg = await Producto.findByIdAndUpdate({ _id: id }, {
-                    titulo: data.titulo,
-                    stock: data.stock,
-                    precio: data.precio,
-                    categoria: data.categoria,
-                    descripcion: data.descripcion,
-                    contenido: data.contenido,
-                    portada: portada_name
-                });
+                    const reg = await Producto.findByIdAndUpdate({ _id: id }, {
+                        titulo: data.titulo,
+                        stock: data.stock,
+                        precio: data.precio,
+                        categoria: data.categoria,
+                        descripcion: data.descripcion,
+                        contenido: data.contenido,
+                        portada: portada_name
+                    });
 
-                fs.stat('./uploads/productos/' + reg.portada, function(err) {
-                    if (!err) {
-                        fs.unlink('./uploads/productos/' + reg.portada, (err) => {
-                            if (err) throw err;
-                        });
-                    }
-                })
+                    fs.stat('./uploads/productos/' + reg.portada, (err) => {
+                        if (!err) {
+                            fs.unlink('./uploads/productos/' + reg.portada, (err) => {
+                                if (err) throw err;
+                            });
+                        }
+                    })
 
-                res.status(200).send({ data: reg });
-            } else {
-                //NO HAY IMAGEN
-                let reg = await Producto.findByIdAndUpdate({ _id: id }, {
-                    titulo: data.titulo,
-                    stock: data.stock,
-                    precio: data.precio,
-                    categoria: data.categoria,
-                    descripcion: data.descripcion,
-                    contenido: data.contenido,
-                });
-                res.status(200).send({ data: reg });
+                    res.status(200).send({ ok: true, data: reg });
+                } else {
+                    //NO HAY IMAGEN
+                    let reg = await Producto.findByIdAndUpdate({ _id: id }, {
+                        titulo: data.titulo,
+                        stock: data.stock,
+                        precio: data.precio,
+                        categoria: data.categoria,
+                        descripcion: data.descripcion,
+                        contenido: data.contenido,
+                    });
+                    res.status(200).send({ ok: true, data: reg });
+                }
+            } catch (err) {
+                res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
             }
 
+
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
-const eliminar_producto_admin = async function(req, res) {
+const eliminar_producto_admin = async(req, res) => {
     if (req.user) {
         if (req.user.role == 'admin') {
+            try {
+                const id = req.params['id'];
 
-            var id = req.params['id'];
+                const reg = await Producto.findByIdAndRemove({ _id: id });
+                res.status(200).send({ ok: true, data: reg });
+            } catch (err) {
+                res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+            }
 
-            let reg = await Producto.findByIdAndRemove({ _id: id });
-            res.status(200).send({ data: reg });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
 const listar_inventario_producto_admin = async function(req, res) {
     if (req.user) {
         if (req.user.role == 'admin') {
+            try {
+                const id = req.params['id'];
 
-            var id = req.params['id'];
+                const reg = await Inventario.find({ producto: id }).populate('admin').sort({ createdAt: -1 });
+                res.status(200).send({ ok: true, data: reg });
+            } catch (err) {
+                res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+            }
 
-            var reg = await Inventario.find({ producto: id }).populate('admin').sort({ createdAt: -1 });
-            res.status(200).send({ data: reg });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
 const eliminar_inventario_producto_admin = async function(req, res) {
     if (req.user) {
         if (req.user.role == 'admin') {
-            //OBTENER ID DEL INVENTARIO
-            var id = req.params['id'];
+            try { //OBTENER ID DEL INVENTARIO
+                var id = req.params['id'];
 
-            //ELIMINAR INVENTARIO
-            let reg = await Inventario.findByIdAndRemove({ _id: id });
+                //ELIMINAR INVENTARIO
+                let reg = await Inventario.findByIdAndRemove({ _id: id });
 
-            //OBTENER EL REGISTRO DE PRODUCTO
-            let prod = await Producto.findById({ _id: reg.producto });
+                //OBTENER EL REGISTRO DE PRODUCTO
+                let prod = await Producto.findById({ _id: reg.producto });
 
-            //CALCULAR EL NUEVO STOCK
-            let nuevo_stock = parseInt(prod.stock) - parseInt(reg.cantidad);
+                //CALCULAR EL NUEVO STOCK
+                let nuevo_stock = parseInt(prod.stock) - parseInt(reg.cantidad);
 
-            //ACTUALICACION DEL NUEVO STOCK AL PRODUCTO
-            let producto = await Producto.findByIdAndUpdate({ _id: reg.producto }, {
-                stock: nuevo_stock
-            })
+                //ACTUALICACION DEL NUEVO STOCK AL PRODUCTO
+                let producto = await Producto.findByIdAndUpdate({ _id: reg.producto }, {
+                    stock: nuevo_stock
+                })
 
-            res.status(200).send({ data: producto });
+                res.status(200).send({ ok: true, data: producto });
+            } catch (err) {
+                res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+            }
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
 const registro_inventario_producto_admin = async function(req, res) {
     if (req.user) {
         if (req.user.role == 'admin') {
+            try {
+                let data = req.body;
 
-            let data = req.body;
+                let reg = await Inventario.create(data);
 
-            let reg = await Inventario.create(data);
+                //OBTENER EL REGISTRO DE PRODUCTO
+                let prod = await Producto.findById({ _id: reg.producto });
 
-            //OBTENER EL REGISTRO DE PRODUCTO
-            let prod = await Producto.findById({ _id: reg.producto });
+                //CALCULAR EL NUEVO STOCK
+                //STOCK ACTUAL         //STOCK A AUMENTAR
+                let nuevo_stock = parseInt(prod.stock) + parseInt(reg.cantidad);
 
-            //CALCULAR EL NUEVO STOCK
-            //STOCK ACTUAL         //STOCK A AUMENTAR
-            let nuevo_stock = parseInt(prod.stock) + parseInt(reg.cantidad);
+                //ACTUALICACION DEL NUEVO STOCK AL PRODUCTO
+                let producto = await Producto.findByIdAndUpdate({ _id: reg.producto }, {
+                    stock: nuevo_stock
+                })
 
-            //ACTUALICACION DEL NUEVO STOCK AL PRODUCTO
-            let producto = await Producto.findByIdAndUpdate({ _id: reg.producto }, {
-                stock: nuevo_stock
-            })
+                res.status(200).send({ ok: true, data: reg });
+            } catch (err) {
+                res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+            }
 
-            res.status(200).send({ data: reg });
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
-const actualizar_producto_variedades_admin = async function(req, res) {
+const actualizar_producto_variedades_admin = async(req, res) => {
     if (req.user) {
         if (req.user.role == 'admin') {
-            let id = req.params['id'];
-            let data = req.body;
+            try {
+                const id = req.params['id'];
+                const data = req.body;
 
-            let reg = await Producto.findByIdAndUpdate({ _id: id }, {
-                titulo_variedad: data.titulo_variedad,
-                variedades: data.variedades
-            });
-            res.status(200).send({ data: reg });
+                const reg = await Producto.findByIdAndUpdate({ _id: id }, {
+                    titulo_variedad: data.titulo_variedad,
+                    variedades: data.variedades
+                });
+                res.status(200).send({ ok: true, data: reg });
+            } catch (err) {
+                res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+            }
+
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -261,29 +289,34 @@ const actualizar_producto_variedades_admin = async function(req, res) {
 const agregar_imagen_galeria_admin = async function(req, res) {
     if (req.user) {
         if (req.user.role == 'admin') {
-            let id = req.params['id'];
-            let data = req.body;
+            try {
+                const id = req.params['id'];
+                const data = req.body;
 
-            var img_path = req.files.imagen.path;
-            var name = img_path.split('\\');
-            var imagen_name = name[2];
+                const img_path = req.files.imagen.path;
+                const name = img_path.split('\\');
+                const imagen_name = name[2];
 
-            let reg = await Producto.findByIdAndUpdate({ _id: id }, {
-                $push: {
-                    galeria: {
-                        imagen: imagen_name,
-                        _id: data._id
+                const reg = await Producto.findByIdAndUpdate({ _id: id }, {
+                    $push: {
+                        galeria: {
+                            imagen: imagen_name,
+                            _id: data._id
+                        }
                     }
-                }
-            });
+                });
 
-            res.status(200).send({ data: reg });
+                res.status(200).send({ ok: true, data: reg });
+            } catch (err) {
+                res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+            }
+
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -291,18 +324,23 @@ const agregar_imagen_galeria_admin = async function(req, res) {
 const eliminar_imagen_galeria_admin = async function(req, res) {
     if (req.user) {
         if (req.user.role == 'admin') {
-            let id = req.params['id'];
-            let data = req.body;
+            try {
+                const id = req.params['id'];
+                const data = req.body;
 
 
-            let reg = await Producto.findByIdAndUpdate({ _id: id }, { $pull: { galeria: { _id: data._id } } });
-            res.status(200).send({ data: reg });
+                const reg = await Producto.findByIdAndUpdate({ _id: id }, { $pull: { galeria: { _id: data._id } } });
+                res.status(200).send({ ok: true, data: reg });
+            } catch (err) {
+                res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+            }
+
 
         } else {
-            res.status(500).send({ message: 'NoAccess' });
+            res.status(500).send({ ok: false, message: 'NoAccess' });
         }
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 
@@ -310,42 +348,75 @@ const eliminar_imagen_galeria_admin = async function(req, res) {
 
 //---METODOS PUBLICOS----------------------------------------------------
 
-const listar_productos_publico = async function(req, res) {
-    var filtro = req.params['filtro'];
+const listar_productos_publico = async(req, res) => {
+    try {
+        const filtro = req.params['filtro'];
+        const reg = await Producto.find({ titulo: new RegExp(filtro, 'i') }).sort({ createdAt: -1 });
+        res.status(200).send({ ok: true, data: reg });
+    } catch (err) {
+        res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+    }
 
-    let reg = await Producto.find({ titulo: new RegExp(filtro, 'i') }).sort({ createdAt: -1 });
-    res.status(200).send({ data: reg });
 }
 
 const obtener_productos_slug_publico = async function(req, res) {
-    var slug = req.params['slug'];
+    try {
+        const slug = req.params['slug'];
 
-    let reg = await Producto.findOne({ slug: slug });
-    res.status(200).send({ data: reg });
+        const reg = await Producto.findOne({ slug: slug });
+        res.status(200).send({ ok: true, data: reg });
+    } catch (err) {
+        res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+    }
+
 }
 
-const listar_productos_recomendados_publico = async function(req, res) {
-    var categoria = req.params['categoria'];
+const listar_productos_recomendados_publico = async(req, res) => {
 
-    let reg = await Producto.find({ categoria: categoria }).sort({ createdAt: -1 }).limit(8);
-    res.status(200).send({ data: reg });
+
+    try {
+        const categoria = req.params['categoria'];
+        const reg = await Producto.find({ categoria: categoria }).sort({ createdAt: -1 }).limit(8);
+        res.status(200).send({ ok: true, data: reg });
+    } catch (err) {
+        res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+    }
+
 }
 
 const listar_productos_nuevos_publico = async function(req, res) {
-    let reg = await Producto.find().sort({ createdAt: -1 }).limit(8);
-    res.status(200).send({ data: reg });
+    try {
+        let reg = await Producto.find().sort({ createdAt: -1 }).limit(8);
+        res.status(200).send({ ok: true, data: reg });
+    } catch (err) {
+        res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+    }
+
 }
 
 const listar_productos_masvendidos_publico = async function(req, res) {
-    let reg = await Producto.find().sort({ nventas: -1 }).limit(8);
-    res.status(200).send({ data: reg });
+    try {
+        let reg = await Producto.find().sort({ nventas: -1 }).limit(8);
+        res.status(200).send({ ok: true, data: reg });
+    } catch (err) {
+        res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+    }
+
+
 }
 
 const obtener_reviews_producto_publico = async function(req, res) {
-    let id = req.params['id'];
 
-    let reviews = await Review.find({ producto: id }).populate('cliente').sort({ createdAt: -1 });
-    res.status(200).send({ data: reviews });
+
+    try {
+        let id = req.params['id'];
+
+        let reviews = await Review.find({ producto: id }).populate('cliente').sort({ createdAt: -1 });
+        res.status(200).send({ ok: true, data: reviews });
+    } catch (err) {
+        res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });
+    }
+
 }
 
 module.exports = {
