@@ -386,14 +386,14 @@ const emitir_review_producto_cliente = async(req, res) => {
     }
 }
 
-const obtener_review_producto_cliente = async function(req, res) {
+const obtener_review_producto_cliente = async(req, res) => {
         let id = req.params['id'];
 
         let reg = await Review.find({ producto: id }).sort({ createdAt: -1 });
         res.status(200).send({ data: reg });
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
-const obtener_reviews_cliente = async function(req, res) {
+const obtener_reviews_cliente = async(req, res) => {
     if (req.user) {
         let id = req.params['id'];
 

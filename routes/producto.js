@@ -9,7 +9,7 @@ const path = multiparty({ uploadDir: './uploads/productos' });
 //PRODUCTOS
 router.post('/registro_producto_admin', [auth.auth, path], productoController.registro_producto_admin);
 router.get('/listar_productos_admin/:filtro?', auth.auth, productoController.listar_productos_admin);
-router.get('/obtener_portada/:img', productoController.obtener_portada);
+
 router.get('/obtener_producto_admin/:id', auth.auth, productoController.obtener_producto_admin);
 router.put('/actualizar_producto_admin/:id', [auth.auth, path], productoController.actualizar_producto_admin);
 router.delete('/eliminar_producto_admin/:id', auth.auth, productoController.eliminar_producto_admin);

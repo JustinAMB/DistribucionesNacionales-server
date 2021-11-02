@@ -11,10 +11,10 @@ const registro_producto_admin = async(req, res) => {
 
             var img_path = req.files.portada.path;
             var name = img_path.split('\\');
-            var portada_name = name[2];
+
 
             data.slug = data.titulo.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-            data.portada = portada_name;
+            data.portada = `${process.env.URL_SERVER}/uploads/productos/${name[2]}`;
             let reg = await Producto.create(data);
 
             let inventario = await Inventario.create({
@@ -55,19 +55,7 @@ const listar_productos_admin = async(req, res) => {
     }
 }
 
-const obtener_portada = async(req, res) => {
-    var img = req.params['img'];
 
-
-    fs.stat(`./uploads/productos/${img}`, (err) => {
-
-        const path_img = !err ? `./uploads/productos/${img}` : './uploads/default.jpg';
-
-
-        res.status(200).send({ ok: true, data: path_img });
-
-    })
-}
 
 const obtener_producto_admin = async(req, res) => {
     if (req.user) {
@@ -104,7 +92,7 @@ const actualizar_producto_admin = async function(req, res) {
 
                     const img_path = req.files.portada.path;
                     const name = img_path.split('\\');
-                    const portada_name = name[2];
+
 
 
                     const reg = await Producto.findByIdAndUpdate({ _id: id }, {
@@ -114,12 +102,12 @@ const actualizar_producto_admin = async function(req, res) {
                         categoria: data.categoria,
                         descripcion: data.descripcion,
                         contenido: data.contenido,
-                        portada: portada_name
+                        portada: `${process.env.URL_SERVER}/uploads/productos/${name[2]}`
                     });
 
-                    fs.stat('./uploads/productos/' + reg.portada, (err) => {
+                    fs.stat(`${process.env.URL_SERVER}/uploads/productos/${reg.portada}`, (err) => {
                         if (!err) {
-                            fs.unlink('./uploads/productos/' + reg.portada, (err) => {
+                            fs.unlink(`${process.env.URL_SERVER}/uploads/productos/${reg.portada}`, (err) => {
                                 if (err) throw err;
                             });
                         }
@@ -286,7 +274,7 @@ const actualizar_producto_variedades_admin = async(req, res) => {
 }
 
 
-const agregar_imagen_galeria_admin = async function(req, res) {
+const agregar_imagen_galeria_admin = async(req, res) => {
     if (req.user) {
         if (req.user.role == 'admin') {
             try {
@@ -295,7 +283,7 @@ const agregar_imagen_galeria_admin = async function(req, res) {
 
                 const img_path = req.files.imagen.path;
                 const name = img_path.split('\\');
-                const imagen_name = name[2];
+                const imagen_name = `${process.env.URL_SERVER}/uploads/productos/${name[2]}`;
 
                 const reg = await Producto.findByIdAndUpdate({ _id: id }, {
                     $push: {
@@ -321,7 +309,7 @@ const agregar_imagen_galeria_admin = async function(req, res) {
 }
 
 
-const eliminar_imagen_galeria_admin = async function(req, res) {
+const eliminar_imagen_galeria_admin = async(req, res) => {
     if (req.user) {
         if (req.user.role == 'admin') {
             try {
@@ -422,7 +410,7 @@ const obtener_reviews_producto_publico = async function(req, res) {
 module.exports = {
     registro_producto_admin,
     listar_productos_admin,
-    obtener_portada,
+
     obtener_producto_admin,
     actualizar_producto_admin,
     eliminar_producto_admin,

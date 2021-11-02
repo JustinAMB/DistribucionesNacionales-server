@@ -1,16 +1,17 @@
 var Descuento = require('../models/descuento');
 var fs = require('fs');
+const dot = require("dotenv");
 var path = require('path');
 const registro_descuento_admin = async(req, res) => {
     if (req.user) {
         if (req.user.role == 'admin') {
             let data = req.body;
 
-            var img_path = req.files.banner.path;
-            var name = img_path.split('\\');
-            var banner_name = name[2];
+            const img_path = req.files.banner.path;
+            const name = img_path.split('\\');
 
-            data.banner = banner_name;
+
+            data.banner = `${process.env.URL_SERVER}/uploads/descuentos/${name[2]}`;
             let reg = await Descuento.create(data);
 
             res.status(200).send({ ok: true, data: reg });
@@ -40,20 +41,6 @@ const listar_descuentos_admin = async(req, res) => {
     }
 }
 
-const obtener_banner_descuento = async(req, res) => {
-    var img = req.params['img'];
-
-
-    fs.stat(
-        `./uploads/descuentos/${img}`, (err) => {
-            const path_img = !err ? `./uploads/descuentos/${img}` : './uploads/default.jpg';
-            res.status(200).send({
-                ok: true,
-                data: path_img
-            });
-
-        })
-}
 
 const obtener_descuento_admin = async(req, res) => {
     if (req.user) {
@@ -86,9 +73,9 @@ const actualizar_descuento_admin = async(req, res) => {
 
             if (req.files) {
                 //SI HAY IMAGEN
-                var img_path = req.files.banner.path;
-                var name = img_path.split('\\');
-                var banner_name = name[2];
+                const img_path = req.files.banner.path;
+                const name = img_path.split('\\');
+
 
 
                 let reg = await Descuento.findByIdAndUpdate({ _id: id }, {
@@ -96,7 +83,7 @@ const actualizar_descuento_admin = async(req, res) => {
                     descuento: data.descuento,
                     fecha_inicio: data.fecha_inicio,
                     fecha_fin: data.fecha_fin,
-                    banner: banner_name
+                    banner: `${process.env.URL_SERVER}/uploads/descuentos/${name[2]}`
                 });
 
                 fs.stat('./uploads/descuentos/' + reg.banner, function(err) {
@@ -169,7 +156,7 @@ const obtener_descuento_activo = async(req, res) => {
 module.exports = {
     registro_descuento_admin,
     listar_descuentos_admin,
-    obtener_banner_descuento,
+
     obtener_descuento_admin,
     actualizar_descuento_admin,
     eliminar_descuento_admin,

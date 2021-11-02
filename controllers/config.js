@@ -36,7 +36,7 @@ const actualiza_config_admin = async(req, res) => {
                     categorias: JSON.parse(data.categorias),
                     titulo: data.titulo,
                     serie: data.serie,
-                    logo: name[2],
+                    logo: `${process.env.URL_SERVER}/uploads/configuraciones/${name[2]}`,
                     correlativo: data.correlativo,
                 });
 
@@ -69,20 +69,7 @@ const actualiza_config_admin = async(req, res) => {
     }
 }
 
-const obtener_logo = async function(req, res) {
-    const img = req.params['img'];
 
-    console.log(img);
-    fs.stat('./uploads/configuraciones/' + img, function(err) {
-        const path_img = !err ? `./uploads/configuraciones/${img }` : './uploads/default.jpg';
-
-        res.status(200).send({
-            ok: true,
-            data: path.resolve(path_img)
-        });
-
-    })
-}
 
 const obtener_config_publico = async(req, res) => {
     try {
@@ -97,6 +84,6 @@ const obtener_config_publico = async(req, res) => {
 module.exports = {
     actualiza_config_admin,
     obtener_config_admin,
-    obtener_logo,
+
     obtener_config_publico
 }
