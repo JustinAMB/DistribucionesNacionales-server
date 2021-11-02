@@ -365,20 +365,24 @@ const enviar_mensaje_contacto = async function(req, res) {
 
     data.estado = 'Abierto';
     let reg = await Contacto.create(data);
-    res.status(200).send({ data: reg });
+    res.status(200).send({ ok: true, data: reg });
 
 }
 
 /**REVIEWS */
-const emitir_review_producto_cliente = async function(req, res) {
+const emitir_review_producto_cliente = async(req, res) => {
     if (req.user) {
-        let data = req.body;
+        try {
+            const data = req.body;
+            const reg = await Review.create(data);
+            res.status(200).send({ ok: true, data: reg });
+        } catch (err) {
+            res.status(401).send({ ok: false, message: 'Ha ocurrido un error intentalo de nuevo' });
+        }
 
-        let reg = await Review.create(data);
-        res.status(200).send({ data: reg });
 
     } else {
-        res.status(500).send({ message: 'NoAccess' });
+        res.status(500).send({ ok: false, message: 'NoAccess' });
     }
 }
 

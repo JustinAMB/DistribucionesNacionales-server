@@ -1,8 +1,8 @@
 const jwt = require('jwt-simple');
 const moment = require('moment');
-const secret = 'diegoararca';
+const secret = 'ucr2021if2021';
 
-exports.auth = function(req, res, next) {
+exports.auth = (req, res, next) => {
 
     if (!req.headers.authorization) {
         return res.status(403).send({ message: 'NoHeadersError' });
@@ -17,13 +17,13 @@ exports.auth = function(req, res, next) {
     } else {
         try {
             const payload = jwt.decode(token, secret);
-
+            console.log(payload);
             if (payload.exp <= moment().unix()) {
-                return res.status(403).send({ message: 'TokenExpirado' });
+                return res.status(403).send({ ok: false, message: 'TokenExpirado' });
             }
 
         } catch (error) {
-            return res.status(403).send({ message: 'InvalidToken' });
+            return res.status(403).send({ ok: false, message: 'InvalidToken' });
         }
     }
 
