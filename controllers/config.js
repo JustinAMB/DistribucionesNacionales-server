@@ -3,10 +3,12 @@ const fs = require('fs');
 const path = require('path');
 
 const obtener_config_admin = async(req, res) => {
+
     if (req.user) {
         if (req.user.role == 'admin') {
 
-            let reg = await Config.findById({ _id: "60aac901eadf8212e476d2da" });
+            let reg = await Config.findById({ _id: "617514202dec1c3a8c91e710" });
+
             res.status(200).send({ ok: true, data: reg });
 
         } else {
@@ -32,11 +34,11 @@ const actualiza_config_admin = async(req, res) => {
 
 
 
-                let reg = await Config.findByIdAndUpdate({ _id: "60aac901eadf8212e476d2da" }, {
+                let reg = await Config.findByIdAndUpdate({ _id: "617514202dec1c3a8c91e710" }, {
                     categorias: JSON.parse(data.categorias),
                     titulo: data.titulo,
                     serie: data.serie,
-                    logo: `${process.env.URL_SERVER}/uploads/configuraciones/${name[2]}`,
+                    logo: `${process.env.URL_SERVER}uploads/configuraciones/${name[2]}`,
                     correlativo: data.correlativo,
                 });
 
@@ -73,7 +75,7 @@ const actualiza_config_admin = async(req, res) => {
 
 const obtener_config_publico = async(req, res) => {
     try {
-        const reg = await Config.findById({ _id: "60aac901eadf8212e476d2da" });
+        const reg = await Config.findById({ _id: "617514202dec1c3a8c91e710" });
         res.status(200).send({ ok: true, data: reg });
     } catch (err) {
         res.status(501).send({ ok: false, message: 'no se han encontrado las configuraciones' });

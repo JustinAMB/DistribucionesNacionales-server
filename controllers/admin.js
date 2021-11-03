@@ -141,18 +141,18 @@ const obtener_ventas_admin = async function(req, res) {
 const kpi_ganancias_mensuales_admin = async function(req, res) {
     if (req.user) {
         if (req.user.role == 'admin') {
-            var enero = 0;
-            var febrero = 0;
-            var marzo = 0;
-            var abril = 0;
-            var mayo = 0;
-            var junio = 0;
-            var julio = 0;
-            var agosto = 0;
-            var septiembre = 0;
-            var octubre = 0;
-            var noviembre = 0;
-            var diciembre = 0;
+            var enero = 2;
+            var febrero = 3;
+            var marzo = 1;
+            var abril = 4;
+            var mayo = 2;
+            var junio = 1;
+            var julio = 9;
+            var agosto = 1;
+            var septiembre = 2;
+            var octubre = 1;
+            var noviembre = 3;
+            var diciembre = 6;
 
             var total_ganancia = 0;
             var total_mes = 0;

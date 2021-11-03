@@ -34,6 +34,3 @@ app.use('/api/Admin', require('./routes/admin'));
 app.listen(app.get('port'), () => {
     console.log(`puerto ${app.get('port')}      `);
 });
-
-
-//ToDo: arrglar token

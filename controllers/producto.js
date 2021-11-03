@@ -14,7 +14,7 @@ const registro_producto_admin = async(req, res) => {
 
 
             data.slug = data.titulo.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-            data.portada = `${process.env.URL_SERVER}/uploads/productos/${name[2]}`;
+            data.portada = `${process.env.URL_SERVER}uploads/productos/${name[2]}`;
             let reg = await Producto.create(data);
 
             let inventario = await Inventario.create({

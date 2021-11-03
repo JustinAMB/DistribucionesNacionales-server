@@ -3,7 +3,7 @@ const moment = require('moment');
 const secret = 'ucr2021if2021';
 
 exports.auth = (req, res, next) => {
-
+    let payload;
     if (!req.headers.authorization) {
         return res.status(403).send({ message: 'NoHeadersError' });
     }
@@ -16,8 +16,8 @@ exports.auth = (req, res, next) => {
         return res.status(403).send({ message: 'InvalidToken' });
     } else {
         try {
-            const payload = jwt.decode(token, secret);
-            console.log(payload);
+            payload = jwt.decode(token, secret);
+            //console.log(payload);
             if (payload.exp <= moment().unix()) {
                 return res.status(403).send({ ok: false, message: 'TokenExpirado' });
             }
