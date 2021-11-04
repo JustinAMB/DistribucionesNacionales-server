@@ -31,6 +31,8 @@ app.use('/api/Cupon', require('./routes/cupon'));
 app.use('/api/Descuento', require('./routes/descuento'));
 app.use('/api/Config', require('./routes/config'));
 app.use('/api/Admin', require('./routes/admin'));
+app.use('/api/Venta', require('./routes/venta'));
+app.use('/api/Carrito', require('./routes/carrito'));
 app.listen(app.get('port'), () => {
     console.log(`puerto ${app.get('port')}      `);
 });
