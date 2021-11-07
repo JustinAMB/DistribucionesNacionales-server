@@ -339,7 +339,8 @@ const eliminar_imagen_galeria_admin = async(req, res) => {
 const listar_productos_publico = async(req, res) => {
     try {
         const filtro = req.params['filtro'];
-        const reg = await Producto.find({ titulo: new RegExp(filtro, 'i') }).sort({ createdAt: -1 });
+        //const reg = await Producto.find({ titulo: new RegExp(filtro, 'i') }).sort({ createdAt: -1 });
+        const reg = await Producto.find();
         res.status(200).send({ ok: true, data: reg });
     } catch (err) {
         res.status(401).send({ ok: false, message: 'Ha ocurrido un error , intentalo de nuevo! ' });

@@ -16,13 +16,13 @@ const path = require('path');
 const registro_compra_cliente = async(req, res) => {
     if (req.user) {
 
-        var data = req.body;
-        var detalles = data.detalles;
+        const data = req.body;
+        const detalles = data.detalles;
 
-        var venta_last = await Venta.find().sort({ createdAt: -1 });
-        var serie;
-        var correlativo;
-        var n_venta;
+        const venta_last = await Venta.find().sort({ createdAt: -1 });
+        let serie;
+        let correlativo;
+        let n_venta;
 
         if (venta_last.length == 0) {
             serie = '001';
@@ -111,8 +111,8 @@ const enviar_correo_compra_cliente = async(req, res) => {
         service: 'gmail',
         host: 'smtp.gmail.com',
         auth: {
-            user: 'diegoalonssoac@gmail.com',
-            pass: 'dcmplvjviofjojgf'
+            user: '',
+            pass: ''
         }
     }));
 

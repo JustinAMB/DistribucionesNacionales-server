@@ -146,9 +146,12 @@ const obtener_descuento_activo = async(req, res) => {
     });
 
     if (arr_descuentos.length >= 1) {
-        res.status(200).send({ data: arr_descuentos });
+        res.status(200).send({ ok: true, data: arr_descuentos });
     } else {
-        res.status(401).send({ ok: false, message: 'error' });
+        res.status(200).send({
+            ok: false,
+            message: 'No hay descuentos activos'
+        });
     }
 
 }
