@@ -1,14 +1,14 @@
 'use strict'
 
-var Admin = require('../models/admin');
-var Venta = require('../models/venta');
-var Dventa = require('../models/dventa');
+const Admin = require('../models/admin');
+const Venta = require('../models/venta');
+const Dventa = require('../models/dventa');
 
-var Contacto = require('../models/contacto');
-var bcrypt = require('bcrypt-nodejs');
-var jwt = require('../helpers/jwt');
+const Contacto = require('../models/contacto');
+const bcrypt = require('bcrypt-nodejs');
+const jwt = require('../helpers/jwt');
 const venta = require('../models/venta');
-const { addListener } = require('../models/admin');
+
 
 const registro_admin = async function(req, res) {
     //

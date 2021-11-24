@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
+const correo = require('./helpers/enviarCorreo');
 const app = express();
 // conexion a bae de datos
 mongoose.connect('mongodb://127.0.0.1:27017/DistribucionesNacionales', async(err, res) => {
@@ -49,6 +50,8 @@ app.use('/api/Admin', require('./routes/admin'));
 app.use('/api/Venta', require('./routes/venta'));
 app.use('/api/Carrito', require('./routes/carrito'));
 //servidor escuchando
+correo();
+
 app.listen(app.get('port'), () => {
     console.log(`puerto ${app.get('port')}      `);
 });

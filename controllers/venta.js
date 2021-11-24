@@ -111,8 +111,8 @@ const enviar_correo_compra_cliente = async(req, res) => {
         service: 'gmail',
         host: 'smtp.gmail.com',
         auth: {
-            user: '',
-            pass: ''
+            user: 'tiendaakahai@gmail.com',
+            pass: 'Zxcv1234$'
         }
     }));
 
