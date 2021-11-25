@@ -41,14 +41,15 @@ const registro_cliente = async function(req, res) {
     }
 }
 
-const login_cliente = async function(req, res) {
+const login_cliente = async(req, res) => {
+    console.log(req.body);
     var data = req.body;
     var cliente_arr = [];
-
+    console.log(data);
     cliente_arr = await Cliente.find({ email: data.email });
 
     if (cliente_arr.length == 0) {
-        res.status(200).send({ message: 'No se encontro el correo', data: undefined });
+        res.status(200).send({ ok: true, message: 'No se encontro el correo' });
     } else {
         //LOGIN
         let user = cliente_arr[0];
@@ -125,9 +126,9 @@ const registro_cliente_admin = async function(req, res) {
                 if (hash) {
                     data.password = hash;
                     let reg = await Cliente.create(data);
-                    res.status(200).send({ data: reg });
+                    res.status(200).send({ ok: true, data: reg });
                 } else {
-                    res.status(200).send({ message: 'Hubo un error en el servidor', data: undefined });
+                    res.status(200).send({ ok: true, message: 'Hubo un error en el servidor' });
                 }
             })
 

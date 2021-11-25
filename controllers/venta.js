@@ -14,11 +14,13 @@ const path = require('path');
 
 
 const registro_compra_cliente = async(req, res) => {
+
     if (req.user) {
+        console.log(req.body);
 
         const data = req.body;
         const detalles = data.detalles;
-
+        console.log(data);
         const venta_last = await Venta.find().sort({ createdAt: -1 });
         let serie;
         let correlativo;
@@ -46,8 +48,11 @@ const registro_compra_cliente = async(req, res) => {
         data.nventa = n_venta;
         data.estado = 'Procesando';
 
-        console.log(data);
-
+        let subtotal = 0;
+        detalles.forEach(async(detalle) => {
+            subtotal += detalle.subtotal;
+        });
+        data.subtotal = subtotal;
         let venta = await Venta.create(data);
 
         detalles.forEach(async element => {
@@ -60,12 +65,12 @@ const registro_compra_cliente = async(req, res) => {
             await Producto.findByIdAndUpdate({ _id: element.producto }, {
                 stock: new_stock
             });
-
-            //limpiar carrito
-            await Carrito.remove({ cliente: data.cliente });
+            /*
+                        //limpiar carrito
+                        await Carrito.remove({ cliente: data.cliente });*/
         });
 
-        res.status(200).send({ ok: true, data: venta });
+        res.status(200).send({ ok: true, data: req.body });
     } else {
         res.status(500).send({ ok: false, message: 'NoAccess' });
     }
@@ -120,6 +125,7 @@ const enviar_correo_compra_cliente = async(req, res) => {
 
     var venta = await Venta.findById({ _id: id }).populate('cliente');
     var detalles = await Dventa.find({ venta: id }).populate('producto');
+    console.log(venta.cliente);
 
     var cliente = venta.cliente.nombres + ' ' + venta.cliente.apellidos;
     var _id = venta._id;
@@ -136,7 +142,7 @@ const enviar_correo_compra_cliente = async(req, res) => {
         var htmlToSend = template({ op: true });
 
         var mailOptions = {
-            from: 'diegoalonssoac@gmail.com',
+            from: 'tiendaakahai@gmail.com',
             to: venta.cliente.email,
             subject: 'Gracias por tu compra, Mi Tienda',
             html: htmlToSend
@@ -151,6 +157,7 @@ const enviar_correo_compra_cliente = async(req, res) => {
         res.status(200).send({ ok: true, message: 'se ha enviado la informacion de la compra a su correo!' });
 
     });
+
 }
 
 module.exports = {

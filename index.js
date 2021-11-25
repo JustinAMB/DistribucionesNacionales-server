@@ -50,7 +50,7 @@ app.use('/api/Admin', require('./routes/admin'));
 app.use('/api/Venta', require('./routes/venta'));
 app.use('/api/Carrito', require('./routes/carrito'));
 //servidor escuchando
-correo();
+
 
 app.listen(app.get('port'), () => {
     console.log(`puerto ${app.get('port')}      `);

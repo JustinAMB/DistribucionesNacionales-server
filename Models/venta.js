@@ -8,9 +8,9 @@ const VentaSchema = Schema({
     envio_titulo: { type: String, require: true },
     envio_precio: { type: Number, require: true },
     transaccion: { type: String, require: true },
-    cupon: { type: String, require: true },
+    cupon: { type: String, require: false },
     estado: { type: String, require: true },
-    direccion: { type: Schema.ObjectId, ref: 'direccion', require: true },
+    direccion: { type: Schema.ObjectId, ref: 'direccion', require: false },
     nota: { type: String, require: true },
     createdAt: { type: Date, default: Date.now, require: true }
 });

@@ -4,6 +4,7 @@ const secret = 'ucr2021if2021';
 
 exports.auth = (req, res, next) => {
     let payload;
+
     if (!req.headers.authorization) {
         return res.status(403).send({ message: 'NoHeadersError' });
     }
