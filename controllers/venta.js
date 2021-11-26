@@ -2,7 +2,7 @@ const Venta = require('../models/venta');
 const Dventa = require('../models/dventa');
 const Producto = require('../models/producto');
 
-const Carrito = require('../models/carrito');
+const Envio = require('../models/envio');
 
 const fs = require('fs');
 const handlebars = require('handlebars');
@@ -49,11 +49,50 @@ const registro_compra_cliente = async(req, res) => {
         data.estado = 'Procesando';
 
         let subtotal = 0;
+
         detalles.forEach(async(detalle) => {
             subtotal += detalle.subtotal;
         });
         data.subtotal = subtotal;
         let venta = await Venta.create(data);
+        const envioInit = {
+            venta: venta.id,
+            etapas: [
+
+                {
+                    etapa: 'Compra registrada',
+                    ok: false,
+                    mostrar: true
+                },
+                {
+                    etapa: 'Preparando envió',
+                    ok: false,
+                    mostrar: false
+                },
+                {
+                    etapa: 'Recibido por el transportista',
+                    ok: false,
+                    mostrar: false
+                },
+                {
+                    etapa: 'SSalida de la bodega del transportista',
+                    ok: false,
+                    mostrar: false
+                },
+                {
+                    etapa: 'Llegada a la sucursal de destino',
+                    ok: false,
+                    mostrar: false
+                },
+                {
+                    etapa: 'Entregado',
+                    ok: false,
+                    mostrar: false
+                }
+            ]
+
+        }
+        await Envio.create(envioInit);
 
         detalles.forEach(async element => {
             element.venta = venta._id;
@@ -70,7 +109,7 @@ const registro_compra_cliente = async(req, res) => {
                         await Carrito.remove({ cliente: data.cliente });*/
         });
 
-        res.status(200).send({ ok: true, data: req.body });
+        res.status(200).send({ ok: true, data: venta });
     } else {
         res.status(500).send({ ok: false, message: 'NoAccess' });
     }
