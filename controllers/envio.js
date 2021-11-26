@@ -65,6 +65,7 @@ const getEnvios = async(req, res) => {
     } catch (error) {
         res.status(500).json({
             ok: false,
+
             message: 'Error al actualizar el envio'
         })
 
