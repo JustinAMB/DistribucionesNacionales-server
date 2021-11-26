@@ -49,6 +49,7 @@ app.use('/api/Config', require('./routes/config'));
 app.use('/api/Admin', require('./routes/admin'));
 app.use('/api/Venta', require('./routes/venta'));
 app.use('/api/Carrito', require('./routes/carrito'));
+app.use('/api/Envio', require('./routes/envio'));
 //servidor escuchando
 
 
