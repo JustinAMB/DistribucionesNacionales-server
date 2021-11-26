@@ -1,6 +1,6 @@
 const Envio = require('../models/envio');
 
-
+const enviarCorreo = require('../helpers/enviarCorreo');
 const update = async(req, res) => {
     try {
         const id = req.params['id'];
@@ -17,6 +17,8 @@ const update = async(req, res) => {
 
         await Envio.findByIdAndUpdate(id, data);
         const envio = await Envio.findById(id);
+        console.log(envio);
+        await enviarCorreo.enviarCorreoEtapa(index, envio.venta);
         res.status(200).json({
             ok: true,
             data: envio,

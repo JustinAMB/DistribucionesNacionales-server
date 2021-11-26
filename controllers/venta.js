@@ -75,7 +75,7 @@ const registro_compra_cliente = async(req, res) => {
                     mostrar: false
                 },
                 {
-                    etapa: 'SSalida de la bodega del transportista',
+                    etapa: 'Salida de la bodega del transportista',
                     ok: false,
                     mostrar: false
                 },
