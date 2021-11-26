@@ -14,7 +14,7 @@ const update = async(req, res) => {
         }
         const etapa = data.etapas[index];
 
-        await Envio.findByIdAndUpdate(id, req.body);
+        await Envio.findByIdAndUpdate(id, data);
         const envio = await Envio.findById(id);
         res.status(200).json({
             ok: true,
@@ -30,4 +30,45 @@ const update = async(req, res) => {
     }
 
 }
-module.exports = { update }
+const getEnvio = async(req, res) => {
+    try {
+        const id = req.params['id'];
+
+
+        const envio = await Envio.findById(id);
+        res.status(200).json({
+            ok: true,
+            data: envio
+
+        })
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            message: 'Error al actualizar el envio'
+        })
+
+    }
+
+}
+const getEnvios = async(req, res) => {
+    try {
+
+
+
+        const envio = await Envio.find();
+        const resultados = envio.filter(envio => envio.etapas[5].ok == false);
+        res.status(200).json({
+            ok: true,
+            data: resultados
+
+        })
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            message: 'Error al actualizar el envio'
+        })
+
+    }
+
+}
+module.exports = { getEnvios, getEnvio, update }
