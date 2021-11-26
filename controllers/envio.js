@@ -1,4 +1,4 @@
-const envio = require('../models/envio');
+const Envio = require('../models/envio');
 
 
 const update = async(req, res) => {
@@ -6,11 +6,12 @@ const update = async(req, res) => {
         const id = req.params['id'];
 
         const data = req.body.envio;
-        const index = data.index;
+
+        const index = req.body.index;
         data.etapas[index].ok = true;
-        data.etapas[index].mostar = false;
+        data.etapas[index].mostrar = false;
         if (index < 5) {
-            data.etapas[index + 1].mostar = true;
+            data.etapas[index + 1].mostrar = true;
         }
         const etapa = data.etapas[index];
 
@@ -22,6 +23,8 @@ const update = async(req, res) => {
             message: 'Envio actualizado'
         })
     } catch (error) {
+
+        console.log(error);
         res.status(500).json({
             ok: false,
             message: 'Error al actualizar el envio'
@@ -42,6 +45,8 @@ const getEnvio = async(req, res) => {
 
         })
     } catch (error) {
+        console.log(error);
+
         res.status(500).json({
             ok: false,
             message: 'Error al actualizar el envio'
